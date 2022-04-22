@@ -42,22 +42,25 @@ def buddhabrot(center, diameter, resolution, iterations=20):
         current = current**2 + C
         past_positions.append(current)
 
-    for i,p in enumerate(past_positions):
-        print(i)
-        # zero out pixels that don't escape
-        p[torch.absolute(current)<2*2] = 0
+    # for i,p in enumerate(past_positions):
+    #     print(i)
+    #     #
+    p = past_positions.stack()
 
-        # align all pixels so that the pixel with smallest Real and Imag part is the first in the matrix
-        p_aligned = p - (x_center-diameter+1j*(y_center-diameter))
-        # make everything integers
-        p_aligned = p_aligned/(2*pixel_width)
-        # round to integer coordinates and restrict to image size
-        real = torch.clamp(p_aligned.real.int(),min=0,max=resolution)
-        imag = torch.clamp(p_aligned.imag.int(),min=0,max=resolution)
-        # assign a number for each coordinate
-        coords = real + imag*resolution
-        # count occurances of each coordinate
-        counts += torch.bincount(coords.flatten(), weights=None, minlength=resolution**2)[:resolution**2]
+    #zero out pixels that don't escape
+    p[torch.absolute(current)<2*2] = 0
+
+    # align all pixels so that the pixel with smallest Real and Imag part is the first in the matrix
+    p_aligned = p - (x_center-diameter+1j*(y_center-diameter))
+    # make everything integers
+    p_aligned = p_aligned/(2*pixel_width)
+    # round to integer coordinates and restrict to image size
+    real = torch.clamp(p_aligned.real.int(),min=0,max=resolution)
+    imag = torch.clamp(p_aligned.imag.int(),min=0,max=resolution)
+    # assign a number for each coordinate
+    coords = real + imag*resolution
+    # count occurances of each coordinate
+    counts += torch.bincount(coords.flatten(), weights=None, minlength=resolution**2)[:resolution**2]
 
     return counts.cpu()
 
