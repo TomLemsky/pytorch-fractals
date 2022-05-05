@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from matplotlib import pyplot as plt
 from matplotlib import colors, animation
 from scipy.signal import convolve2d
