@@ -6,9 +6,7 @@ by vectorizing the pixel computations into matrices/tensors in linear algebra fr
 
 ## [Mandelbrot](https://github.com/TomLemsky/pytorch-fractals/blob/main/mandelbrot.py)
 
-https://user-images.githubusercontent.com/101422788/167694210-96bebd21-2be6-4e20-b680-822865ad5d2e.mp4
-
-<img src="mandelbrot_animation/0009.png" alt="Image of Mandelbrot fractal" width="500"/>
+![mandelbrot](https://user-images.githubusercontent.com/101422788/167695442-fc2f8984-3711-44eb-83b6-49047ac20076.gif)
 
 The Mandelbrot was the most straight-forward to implement using complex matrices (For Mandelbrot zoom animations *doubles* and *torch.complex128* have to be used). 
 The code is extremely simple, with the core loop consisting just of two lines ([Full code here](https://github.com/TomLemsky/pytorch-fractals/blob/main/mandelbrot.py)): 
@@ -34,7 +32,7 @@ for i in range(1,iterations):
 
 ## [Buddhabrot](https://en.wikipedia.org/wiki/Buddhabrot)
 
-<img src="example_outputs/buddhabrot.png" alt="Image of Buddhabrot fractal" width="500"/>
+<img src="https://user-images.githubusercontent.com/101422788/167695834-9d4d6e72-627f-43e8-bac0-14979c46bf43.png" alt="Image of Buddhabrot fractal" width="500"/>
 
 The [Buddhabrot](https://en.wikipedia.org/wiki/Buddhabrot) was more difficult to implement,
 since you have to keep track of where the pixels that end up outside the Mandelbrot set were before ([Full explanation on Wikipedia](https://en.wikipedia.org/wiki/Buddhabrot#Rendering_method)). 
@@ -43,6 +41,8 @@ Once to find out which pixels will end up outside the Mandelbrot set and once to
 I currently use the first option for speed and the memory impact is acceptible for small number of iterations.
 To count the number of pixels that have visited each position, I used a trick that I learned from segmentation loss functions during my Master's thesis:
 Each position (x,y) gets assigned a number `j = x + y*resolution` and then the occurances of each position is counted using `torch.bincount(j.flatten())`.
+
+
 
 ([Full code here](https://github.com/TomLemsky/pytorch-fractals/blob/main/buddhabrot.py))
 
@@ -74,13 +74,13 @@ for i,p in enumerate(past_positions):
 
 # [Abelian Sandpile](https://en.wikipedia.org/wiki/Abelian_sandpile_model)
 
-![](example_outputs/sandpile.gif)
+![sandpile](https://user-images.githubusercontent.com/101422788/167695768-a2b252dd-27ef-4cbe-9f37-bee495333a87.gif)
 
 I learned about the Abelian Sandpile fractal from [this Numberphile video](https://www.youtube.com/watch?v=1MtEUErz7Gg). 
 It looked interesting and I liked the emergence of a [Sierpinski triangle pattern](https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle).
 When a pixel reaches a value of four or larger, it topples and the value of the directly neighboring pixels is incremented by one.
 This behaviour can be efficiently computed by a 2D-convolution with the kernel that is zero everywhere,
-but marks the position of the neighbors of the center pixel with a one:
+but marks the position of each neighbor of the center pixel with a one:
 
 ([Full code here](https://github.com/TomLemsky/pytorch-fractals/blob/main/sandpile_torch.py))
 
@@ -100,3 +100,4 @@ for i in range(iterations):
     # add 1 to neighbors of overflowing pixels
     grid += func.conv2d(overflow, overflow_kernel,stride=(1,), padding=(1,)).long()
 ```
+
